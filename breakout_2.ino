@@ -64,6 +64,9 @@ bool bricks [6*25] = {
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 };
 
+int ball_x = SSD1306_LCDWIDTH / 2;
+int ball_y = SSD1306_LCDHEIGHT * 3 / 4;
+
 void draw_bricks() {
   int l, x, b=0;
 
@@ -82,6 +85,10 @@ void draw_arena() {
   display.drawLine(127, 0, 127, 63, WHITE);
 }
 
+void draw_ball() {
+  display.drawPixel(ball_x, ball_y, WHITE);
+}
+
 void setup() {
   long sensorvalue, bat_x;
   Serial.begin(9600);
@@ -96,6 +103,7 @@ void setup() {
 
     draw_arena();
     draw_bricks();
+    draw_ball();
 
     sensorvalue = analogRead(A0);
 
