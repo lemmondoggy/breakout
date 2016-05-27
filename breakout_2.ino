@@ -33,6 +33,13 @@ bool bricks [6*25] = {
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 };
 
+struct ball {
+  int x;
+  int y;
+  int x_vel;
+  int y_vel;
+};
+
 int ball_x = SSD1306_LCDWIDTH / 2;
 int ball_y = SSD1306_LCDHEIGHT * 3 / 4;
 
