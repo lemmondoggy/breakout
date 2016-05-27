@@ -72,8 +72,24 @@ void draw_ball() {
   display.drawPixel(ball.x, ball.y, WHITE);
 }
 
+static int bat_x;
+
+void move_ball() {
+  ball.x += ball.x_vel;
+  ball.y += ball.y_vel;
+
+  if(ball.x <= 1 || ball.x >= SSD1306_LCDWIDTH-1)
+    ball.x_vel = -ball.x_vel;
+
+  if(ball.y <=1 || (ball.y == 59 && (ball.x >= bat_x && ball.x <= bat_x+10)))
+    ball.y_vel = -ball.y_vel;
+
+  if(ball.y >= 80)
+    start_game();
+}
+
 void setup() {
-  long sensorvalue, bat_x;
+  long sensorvalue;
   Serial.begin(9600);
 
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
@@ -89,6 +105,7 @@ void setup() {
     draw_arena();
     draw_bricks();
     draw_ball();
+    move_ball();
 
     sensorvalue = analogRead(A0);
 
