@@ -1,0 +1,9 @@
+Breakout for Arduino
+--------------------
+
+This is the first game I have programmed, it's in c++ and runs on an
+Arduino UNO, using a 128x64 pixel SSD1306 I2C screen.
+
+This is the first time I have written anything in a "proper" programing
+language, instead of graphical things like Scratch.
+
