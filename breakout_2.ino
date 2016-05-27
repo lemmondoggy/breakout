@@ -74,6 +74,19 @@ void move_ball() {
 
   if(ball.y >= 80)
     start_game();
+
+  if(ball.y >= 14 && ball.y < 32) {
+    int brick_x, brick_y;
+
+    brick_x = (ball.x - 2) / 5;
+    brick_y = (ball.y - 14) / 3;
+
+    if (brick_x > 24)
+      brick_x = 24;
+
+    bricks [(brick_y * 25) + brick_x] = 0;
+  }
+
 }
 
 void setup() {
