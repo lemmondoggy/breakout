@@ -40,8 +40,15 @@ struct ball {
   int y_vel;
 };
 
-int ball_x = SSD1306_LCDWIDTH / 2;
-int ball_y = SSD1306_LCDHEIGHT * 3 / 4;
+
+struct ball ball;
+
+void start_game(void) {
+  ball.x = SSD1306_LCDWIDTH / 2;
+  ball.y = SSD1306_LCDHEIGHT * 3 / 4;
+  ball.x_vel = 1;
+  ball.y_vel = -1;
+}
 
 void draw_bricks() {
   int l, x, b=0;
@@ -62,7 +69,7 @@ void draw_arena() {
 }
 
 void draw_ball() {
-  display.drawPixel(ball_x, ball_y, WHITE);
+  display.drawPixel(ball.x, ball.y, WHITE);
 }
 
 void setup() {
@@ -72,6 +79,8 @@ void setup() {
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
   // init done
+
+  start_game();
 
   while(1) {
     // Clear the buffer.
