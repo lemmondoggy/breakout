@@ -90,17 +90,21 @@ void move_ball() {
 }
 
 void setup() {
-  long sensorvalue;
   Serial.begin(9600);
 
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3D (for the 128x64)
+  display.display();
   // init done
 
   start_game();
 
-  while(1) {
-    // Clear the buffer.
+}
+
+void loop() {
+    long sensorvalue;
+
+   // Clear the buffer.
     display.clearDisplay();
 
     draw_arena();
@@ -121,14 +125,5 @@ void setup() {
 
     // to make them visible on the display hardware!
     display.display();
-  }
-}
-
-
-
-
-
-void loop() {
-
 }
 
