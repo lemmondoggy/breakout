@@ -62,7 +62,45 @@ void draw_ball() {
 
 static int bat_x;
 
+int which_brick(int x, int y) {
+  int brick_x, brick_y;
+
+  brick_x = (x - 2) / 5;
+  brick_y = (y - 14) / 3;
+
+  if (brick_y > 5 || brick_y < 0)
+    return -1;
+
+  if (brick_x > 24)
+    brick_x = 24;
+
+  return (brick_y * 25) + brick_x;
+}
+
 void move_ball() {
+  int b = -1;
+
+  if (((ball.x - 2) % 5 == 0) && ((ball.y - 14) % 3 == 0)) {
+    b = which_brick(ball.x + ball.x_vel, ball.y + ball.y_vel);
+    if(b > -1 && bricks[b]) {
+      ball.x_vel = -ball.x_vel;
+      ball.y_vel = -ball.y_vel;
+    }
+  }
+  else if ((ball.x - 2) % 5 == 0) {
+    b = which_brick(ball.x + ball.x_vel, ball.y);
+    if(b > -1 && bricks[b])
+      ball.x_vel = -ball.x_vel;
+  }
+  else if ((ball.y - 14) % 3 == 0) {
+    b = which_brick(ball.x, ball.y + ball.y_vel);
+    if(b > -1 && bricks[b])
+      ball.y_vel = -ball.y_vel;
+  }
+
+  if (b != -1)
+      bricks [b] = 0;
+
   ball.x += ball.x_vel;
   ball.y += ball.y_vel;
 
@@ -74,18 +112,6 @@ void move_ball() {
 
   if(ball.y >= 80)
     start_game();
-
-  if(ball.y >= 14 && ball.y < 32) {
-    int brick_x, brick_y;
-
-    brick_x = (ball.x - 2) / 5;
-    brick_y = (ball.y - 14) / 3;
-
-    if (brick_x > 24)
-      brick_x = 24;
-
-    bricks [(brick_y * 25) + brick_x] = 0;
-  }
 
 }
 
