@@ -12,14 +12,7 @@
 #define OLED_RESET 4
 Adafruit_SSD1306 display(OLED_RESET);
 
-bool bricks [6*25] = {
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-};
+bool bricks [6*25];
 
 struct ball {
   int x;
@@ -32,10 +25,24 @@ struct ball {
 struct ball ball;
 
 void start_game(void) {
+  int b;
+
   ball.x = SSD1306_LCDWIDTH / 2;
   ball.y = SSD1306_LCDHEIGHT * 3 / 4;
   ball.x_vel = 1;
   ball.y_vel = -1;
+
+  for(b = 0; b < 6*25; b++)
+    bricks[b] = 1;
+
+  // Clear the buffer.
+  display.clearDisplay();
+
+  draw_arena();
+  draw_bricks();
+
+  // To make them visible on the display hardware!
+  display.display();
 }
 
 void draw_bricks() {
@@ -43,10 +50,9 @@ void draw_bricks() {
 
   for (l=0; l<6; l++)
     for (x=0; x<25; x++) {
-      if(bricks[b++]){
-        display.drawLine(x*5 + 2, l*3 + 14, x*5 + 5, l*3 + 14, WHITE);
-        display.drawLine(x*5 + 2, l*3 + 15, x*5 + 5, l*3 + 15, WHITE);
-      }
+        display.drawLine(x*5 + 2, l*3 + 14, x*5 + 5, l*3 + 14, bricks[b]?WHITE:BLACK);
+        display.drawLine(x*5 + 2, l*3 + 15, x*5 + 5, l*3 + 15, bricks[b]?WHITE:BLACK);
+        b++;
     }
 }
 
@@ -56,8 +62,8 @@ void draw_arena() {
   display.drawLine(127, 0, 127, 63, WHITE);
 }
 
-void draw_ball() {
-  display.drawPixel(ball.x, ball.y, WHITE);
+void draw_ball(int c) {
+  display.drawPixel(ball.x, ball.y, c);
 }
 
 static int bat_x;
@@ -98,13 +104,15 @@ void move_ball() {
       ball.y_vel = -ball.y_vel;
   }
 
-  if (b != -1)
+  if (b != -1) {
       bricks [b] = 0;
+      draw_bricks();
+  }
 
   ball.x += ball.x_vel;
   ball.y += ball.y_vel;
 
-  if(ball.x <= 1 || ball.x >= SSD1306_LCDWIDTH-1)
+  if(ball.x <= 1 || ball.x >= SSD1306_LCDWIDTH-2)
     ball.x_vel = -ball.x_vel;
 
   if(ball.y <=1 || (ball.y == 59 && (ball.x >= bat_x && ball.x <= bat_x+10)))
@@ -125,20 +133,20 @@ void setup() {
 
   start_game();
 
+  // Make sure it doesnt undraw the arena at the start
+  bat_x = 1;
 }
 
 void loop() {
     long sensorvalue;
 
-   // Clear the buffer.
-    display.clearDisplay();
-
-    draw_arena();
-    draw_bricks();
-    draw_ball();
+    draw_ball(BLACK);
     move_ball();
+    draw_ball(WHITE);
 
     sensorvalue = analogRead(A0);
+
+    display.drawLine(bat_x, 60, bat_x + 10, 60, BLACK);
 
     bat_x = (sensorvalue * 115 / 1023) + 1;
 
